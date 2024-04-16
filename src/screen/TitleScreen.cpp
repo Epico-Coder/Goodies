@@ -1,7 +1,7 @@
 #include "TitleScreen.h"
-#include "ScreenManager.h"
 
-TitleScreen::TitleScreen()
+TitleScreen::TitleScreen(Observer* screenManager) :
+    p_screenManager(screenManager)
 {
     // Load bg image
     
@@ -17,11 +17,6 @@ TitleScreen::TitleScreen()
             p_backgroundFrames.push_back(background_frame);
     }
     
-
-
-
-
-
     // Load title and subtitle image
     if (!p_titleTexture.loadFromFile("resources/images/title_screen/title.png"))
         std::cout << "Cannot load " << "title.png" << std::endl;
@@ -69,15 +64,9 @@ void TitleScreen::draw(sf::RenderWindow& window)
     window.draw(p_title);
 
     // Draw buttons
-    bool screenChanged = false;
     for (auto& button : p_buttons)
     {
         button.draw(window);
-        if (button.screenChanged)
-        {
-            screenChanged = true;
-            break;
-        }
     }
 }
 
@@ -89,15 +78,9 @@ void TitleScreen::update(sf::Time delaTime)
 void TitleScreen::handleInput(const sf::Event& event, sf::RenderWindow& window)
 {
     // Handle button inputs
-    bool screenChanged = false;
     for (auto& button : p_buttons)
     {
         button.handleEvent(event, window);
-        if (button.screenChanged)
-        {
-            screenChanged = true;
-            break;
-        }
     }
 }
 
@@ -114,10 +97,7 @@ void TitleScreen::handleResize(sf::RenderWindow& window)
     p_buttons.clear();
 
     p_buttons.emplace_back("Main Menu", sf::Color(108, 162, 91), p_buttonFont, 24, getPosition(75, 33, window), getSize(20, 10, window), 50);
-    p_buttons[0].onClick = []() {
-        ScreenManager::getInstance().setScreen("MENU");
-
-    };
+    p_buttons[0].addObserver(p_screenManager);
     p_buttons.emplace_back("Customize Profile", sf::Color(91, 143, 162), p_buttonFont, 24, getPosition(75, 50, window), getSize(20, 10, window), 50);
     p_buttons.emplace_back("Settings", sf::Color(162, 110, 91), p_buttonFont, 24, getPosition(75, 66, window), getSize(20, 10, window), 50);
 }

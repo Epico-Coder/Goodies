@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "screen/ScreenManager.h"
+#include "systems/ScreenManager.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -13,8 +13,8 @@ int main()
 
     sf::RenderWindow win(sf::VideoMode(WIDTH, HEIGHT), "Goodies", sf::Style::Default);
 
-    ScreenManager& screenManager = ScreenManager::getInstance();
-    screenManager.setScreen(std::make_unique<TitleScreen>());
+    ScreenManager screenManager;
+    screenManager.setScreen(std::make_unique<TitleScreen>(&screenManager));
     screenManager.handleResize(win);
 
     int i = 0;

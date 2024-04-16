@@ -6,19 +6,24 @@
 #include <cmath>
 #include <functional>
 
+#include "../systems/Observable.h"
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
 
-class Button
+class Button : public Observable
 {
 public:
     Button(const std::string& label, sf::Color button_color, std::shared_ptr<sf::Font> font, unsigned int fontSize, const sf::Vector2f& position, const sf::Vector2f& size, float radius = 0, sf::Color text_color = sf::Color::White);
     void draw(sf::RenderWindow& window);
     void handleEvent(const sf::Event& event, sf::RenderWindow& window);
+    void onClick()
+    {
+        notifyObservers("ButtonClicked", "MenuScreen");
+    }
 public:
-    std::function<void()> onClick;
-    bool screenChanged = false;
+    //std::function<void()> onClick;
 private:
     void p_buildButtonShape(const sf::Vector2f& position, const sf::Vector2f& size, float radius);
 private:

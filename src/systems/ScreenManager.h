@@ -2,30 +2,27 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
-#include "Screen.h"
-#include "TitleScreen.h"
-#include "MenuScreen.h"
+#include "../screen/TitleScreen.h"
+#include "../screen/MenuScreen.h"
 
 #include <SFML/Graphics.hpp>
 
-class ScreenManager
+class ScreenManager : public Observer
 {
 public:
-    static ScreenManager& getInstance();
+    ScreenManager();
 
-    ScreenManager(const ScreenManager&) = delete;
-    ScreenManager& operator=(const ScreenManager&) = delete;
-
+    void onNotify(const std::string& event, const std::string& data) override;
     void setScreen(std::unique_ptr<Screen> screen);
     void setScreen(std::string screenName);
     void handleInput(const sf::Event& event, sf::RenderWindow& window);
     void update(sf::Time deltaTime);
     void draw(sf::RenderWindow& window);
     void handleResize(sf::RenderWindow& window);
-private:
-    std::unique_ptr<Screen> p_currentScreen;
-    static ScreenManager* instance;
 
-    ScreenManager() {}
+private:
+    std::unordered_map<std::string, std::unique_ptr<Screen>> p_screens;
+    std::unique_ptr<Screen> p_currentScreen;
 };

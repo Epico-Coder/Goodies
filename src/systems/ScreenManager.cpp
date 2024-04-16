@@ -1,17 +1,24 @@
 #include "ScreenManager.h"
 
-ScreenManager* ScreenManager::instance = nullptr;
 
-ScreenManager& ScreenManager::getInstance()
+ScreenManager::ScreenManager()
 {
-    if (!instance)
-        instance = new ScreenManager();
+}
 
-    return *instance;
+
+
+void ScreenManager::onNotify(const std::string& event, const std::string& data)
+{
+    if (event == "ButtonClicked") 
+    {
+        std::cout << data << std::endl;
+        setScreen(data);
+    }
 }
 
 void ScreenManager::setScreen(std::unique_ptr<Screen> screen)
 {
+    p_currentScreen.release();
     p_currentScreen = std::move(screen);
 }
 
@@ -19,9 +26,9 @@ void ScreenManager::setScreen(std::string screenName)
 {
     if (screenName == "TITLE")
     {
-        setScreen(std::make_unique<TitleScreen>());
+        setScreen(std::make_unique<TitleScreen>(this));
     }
-    else if (screenName == "MENU")
+    else if (screenName == "MenuScreen")
     {
         setScreen(std::make_unique<MenuScreen>());
     }

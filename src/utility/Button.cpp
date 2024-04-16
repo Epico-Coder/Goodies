@@ -87,11 +87,13 @@ void Button::handleEvent(const sf::Event& event, sf::RenderWindow& window)
             p_buttonClick.setBuffer(p_buttonClickBuffer);
             p_buttonClick.play();
 
+            onClick();
+            /*
             if (onClick)
             {
                 onClick();
-                screenChanged = true;
             }
+            */
         }
     }
 }
