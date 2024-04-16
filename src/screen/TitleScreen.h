@@ -11,11 +11,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-class TitleScreen : Screen
+class TitleScreen : public Screen
 {
 public:
     TitleScreen();
     void draw(sf::RenderWindow& window);
+    void update(sf::Time delaTime);
     void handleInput(const sf::Event& event, sf::RenderWindow& window);
     void handleResize(sf::RenderWindow& window);
 private:
@@ -33,5 +34,3 @@ private:
     std::vector<Button> p_buttons;
     std::shared_ptr<sf::Font> p_buttonFont;
 };
-
-

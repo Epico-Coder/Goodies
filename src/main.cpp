@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "screen/ScreenTitle.h"
+#include "screen/ScreenManager.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -13,8 +13,9 @@ int main()
 
     sf::RenderWindow win(sf::VideoMode(WIDTH, HEIGHT), "Goodies", sf::Style::Default);
 
-    TitleScreen titleScreen;
-    titleScreen.handleResize(win);
+    ScreenManager& screenManager = ScreenManager::getInstance();
+    screenManager.setScreen(std::make_unique<TitleScreen>());
+    screenManager.handleResize(win);
 
     int i = 0;
 
@@ -30,11 +31,16 @@ int main()
                 win.close();
             }
 
-            titleScreen.handleInput(event, win);
+            if (event.type == sf::Event::Resized)
+            {
+                screenManager.handleResize(win);
+            }
+
+            screenManager.handleInput(event, win);
         }
 
         win.clear();
-        titleScreen.draw(win);
+        screenManager.draw(win);
         win.display();
 
         i++;

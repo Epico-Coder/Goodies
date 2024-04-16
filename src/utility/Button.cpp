@@ -83,8 +83,15 @@ void Button::handleEvent(const sf::Event& event, sf::RenderWindow& window)
         if (event.mouseButton.button == sf::Mouse::Left)
         {
             std::cout << "Button " << p_text.getString().toAnsiString() << " pressed!" << std::endl;
+            
             p_buttonClick.setBuffer(p_buttonClickBuffer);
             p_buttonClick.play();
+
+            if (onClick)
+            {
+                onClick();
+                screenChanged = true;
+            }
         }
     }
 }
