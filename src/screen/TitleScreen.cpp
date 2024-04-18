@@ -1,15 +1,13 @@
 #include "TitleScreen.h"
 
-TitleScreen::TitleScreen(Observer* screenManager) :
-    p_screenManager(screenManager)
+TitleScreen::TitleScreen()
 {
     // Load bg image
-    
     for (int i = 1; i <= 8; i++)
     {
         sf::Texture background_frame;
         std::string fileName = "resources/images/title_screen/background_frames/background" + std::to_string(i) + ".jpg";
-        fileName = "resources/images/menu_screen/background1.jpg";
+        //fileName = "resources/images/menu_screen/background1.jpg";
 
         if (!background_frame.loadFromFile(fileName))
             std::cout << "Cannot load " << fileName << std::endl;
@@ -48,6 +46,17 @@ TitleScreen::TitleScreen(Observer* screenManager) :
     }
 }
 
+void TitleScreen::init(sf::RenderWindow& window)
+{
+    handleResize(window);
+}
+
+void TitleScreen::unScreen()
+{
+    p_backgroundMusic.pause();
+}
+
+
 void TitleScreen::draw(sf::RenderWindow& window)
 {
     // Draw bg
@@ -72,7 +81,15 @@ void TitleScreen::draw(sf::RenderWindow& window)
 
 void TitleScreen::update(sf::Time delaTime)
 {
-
+    // Handle button clicks
+    for (auto& button : p_buttons)
+    {
+        if ((button.getIsClicked()) && (button.getLinkedObject().size()))
+        {
+            ScreenManager::getInstance().setScreen(button.getLinkedObject());
+            break;
+        }
+    }
 }
 
 void TitleScreen::handleInput(const sf::Event& event, sf::RenderWindow& window)
@@ -80,7 +97,7 @@ void TitleScreen::handleInput(const sf::Event& event, sf::RenderWindow& window)
     // Handle button inputs
     for (auto& button : p_buttons)
     {
-        button.handleEvent(event, window);
+        button.handleInput(event, window);
     }
 }
 
@@ -97,7 +114,8 @@ void TitleScreen::handleResize(sf::RenderWindow& window)
     p_buttons.clear();
 
     p_buttons.emplace_back("Main Menu", sf::Color(108, 162, 91), p_buttonFont, 24, getPosition(75, 33, window), getSize(20, 10, window), 50);
-    p_buttons[0].addObserver(p_screenManager);
+    p_buttons[0].linkObj("MenuScreen");
+
     p_buttons.emplace_back("Customize Profile", sf::Color(91, 143, 162), p_buttonFont, 24, getPosition(75, 50, window), getSize(20, 10, window), 50);
     p_buttons.emplace_back("Settings", sf::Color(162, 110, 91), p_buttonFont, 24, getPosition(75, 66, window), getSize(20, 10, window), 50);
 }

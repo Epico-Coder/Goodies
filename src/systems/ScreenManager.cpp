@@ -1,36 +1,43 @@
 #include "ScreenManager.h"
 
 
-ScreenManager::ScreenManager()
+ScreenManager* ScreenManager::p_instance = nullptr;
+
+
+ScreenManager& ScreenManager::getInstance()
 {
-}
-
-
-
-void ScreenManager::onNotify(const std::string& event, const std::string& data)
-{
-    if (event == "ButtonClicked") 
+    if (p_instance == nullptr)
     {
-        std::cout << data << std::endl;
-        setScreen(data);
+        p_instance = new ScreenManager();
     }
+    return *p_instance;
 }
 
-void ScreenManager::setScreen(std::unique_ptr<Screen> screen)
+
+void ScreenManager::setWin(sf::RenderWindow* win)
 {
-    p_currentScreen.release();
-    p_currentScreen = std::move(screen);
+    p_win = win;
+}
+
+void ScreenManager::addScreen(const std::string& name, std::unique_ptr<Screen> screen)
+{
+    p_screens[name] = std::move(screen);
 }
 
 void ScreenManager::setScreen(std::string screenName)
 {
-    if (screenName == "TITLE")
+    if (p_currentScreen)
     {
-        setScreen(std::make_unique<TitleScreen>(this));
+        p_currentScreen->unScreen();
     }
-    else if (screenName == "MenuScreen")
+
+    auto it = p_screens.find(screenName);
+    if (it != p_screens.end()) 
     {
-        setScreen(std::make_unique<MenuScreen>());
+        p_currentScreen = it->second.get();
+        p_currentScreen->init(*p_win);
+
+        std::cout << "NEW SCREEN: " << screenName << std::endl;
     }
 }
 

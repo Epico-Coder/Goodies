@@ -1,7 +1,7 @@
 #include "Button.h"
 
 Button::Button(const std::string& label, sf::Color button_color, std::shared_ptr<sf::Font> font, unsigned int fontSize, const sf::Vector2f& position, const sf::Vector2f& size, float radius, sf::Color text_color) :
-    p_color(button_color), p_font(font), p_isHovered(false)
+    p_color(button_color), p_font(font), p_isHovered(false), p_isClicked(false)
 {
     // Initialize text
     p_text.setFont(*p_font);
@@ -24,6 +24,11 @@ Button::Button(const std::string& label, sf::Color button_color, std::shared_ptr
     }
 }
 
+void Button::linkObj(std::string linkedObject)
+{
+    p_linkedObject = linkedObject;
+}
+
 void Button::draw(sf::RenderWindow& window)
 {
     for (auto& rectangle : p_rectangles)
@@ -35,7 +40,7 @@ void Button::draw(sf::RenderWindow& window)
     window.draw(p_text);
 }
 
-void Button::handleEvent(const sf::Event& event, sf::RenderWindow& window)
+void Button::handleInput(const sf::Event& event, sf::RenderWindow& window)
 {
     if (event.type == sf::Event::MouseMoved)
     {
@@ -76,8 +81,9 @@ void Button::handleEvent(const sf::Event& event, sf::RenderWindow& window)
 
             p_isHovered = false;
         }
-    }
-
+    }       
+    
+    p_isClicked = false;
     if (event.type == sf::Event::MouseButtonPressed && p_isHovered)
     {
         if (event.mouseButton.button == sf::Mouse::Left)
@@ -86,16 +92,20 @@ void Button::handleEvent(const sf::Event& event, sf::RenderWindow& window)
             
             p_buttonClick.setBuffer(p_buttonClickBuffer);
             p_buttonClick.play();
-
-            onClick();
-            /*
-            if (onClick)
-            {
-                onClick();
-            }
-            */
+            
+            p_isClicked = true; 
         }
     }
+}
+
+bool Button::getIsClicked()
+{
+    return p_isClicked;
+}
+
+std::string Button::getLinkedObject()
+{
+    return p_linkedObject;
 }
 
 void Button::p_buildButtonShape(const sf::Vector2f& position, const sf::Vector2f& size, float radius)
